@@ -16524,8 +16524,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1181394453}
   - {fileID: 756230701}
+  - {fileID: 1181394453}
   - {fileID: 1159866380}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -16666,6 +16666,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dragController: {fileID: 1960356180}
   _cameraRotationController: {fileID: 1323463415}
+  _cameraZoomController: {fileID: 0}
   _cameraPivot: {fileID: 1323463414}
   _boxItem: {fileID: 1159866381}
   _correctSoundData:
@@ -17195,7 +17196,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1181394452}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -17475,6 +17476,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1323463414}
   - component: {fileID: 1323463415}
+  - component: {fileID: 1323463416}
   m_Layer: 0
   m_Name: CameraPivot
   m_TagString: Untagged
@@ -17514,8 +17516,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e8dc76369eb45258fe8dd701e802786, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _blockControllers:
-  - {fileID: 1960356180}
   _camera: {fileID: 330585545}
   _blockLayer:
     serializedVersion: 2
@@ -17525,6 +17525,27 @@ MonoBehaviour:
   _startAngleY: 45
   _leftAngleLimit: 105
   _rightAngleLimit: -15
+--- !u!114 &1323463416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1323463413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f541e8b84445f498c2be43f751e414, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 330585545}
+  _blockLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _zoomSpeed: 20
+  _zoomSmoothness: 6
+  _startZoom: 14
+  _minZoom: 10
+  _maxZoom: 18
 --- !u!1 &1359821918
 GameObject:
   m_ObjectHideFlags: 0

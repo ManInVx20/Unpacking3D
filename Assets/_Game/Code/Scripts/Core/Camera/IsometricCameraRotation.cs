@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,8 +5,6 @@ namespace VinhLB
 {
     public class IsometricCameraRotation : BaseController
     {
-        [SerializeField]
-        private BaseController[] _blockControllers;
         [SerializeField]
         private Camera _camera;
         [SerializeField]
@@ -41,14 +38,6 @@ namespace VinhLB
             {
                 return;
             }
-            
-            // if (IsAnyControllerInUse(_blockControllers) || 
-            //     !InUse && VinhLBUtility.TryCastRay(_camera, out _, float.PositiveInfinity, _blockLayer))
-            // {
-            //     Stop();
-            //     
-            //     return;
-            // }
             
             if (_canGetInput && VinhLBUtility.IsPointerDown())
             {
@@ -92,56 +81,30 @@ namespace VinhLB
                 }
             }
         }
-
+        
         private void LateUpdate()
         {
-            // if (IsActive && !IsAnyControllerInUse(_blockControllers))
-            // {
-            //     if (VinhLBUtility.IsPointerActive())
-            //     {
-            //         InUse = true;
-            //         
-            //         Vector2 deltaPosition = VinhLBUtility.GetPointerDeltaPosition();
-            //         _deltaX += deltaPosition.x * _rotationSpeed * Time.deltaTime;
-            //         
-            //         if (_leftAngleLimit > _rightAngleLimit)
-            //         {
-            //             _deltaX = Mathf.Clamp(_deltaX, _rightAngleLimit, _leftAngleLimit);
-            //         }
-            //         else
-            //         {
-            //             _deltaX = Mathf.Clamp(_deltaX, _leftAngleLimit, _rightAngleLimit);   
-            //         }
-            //     
-            //         // transform.Rotate(Vector3.up, deltaX * _rotationSpeed * Time.deltaTime, Space.World);
-            //     }
-            //     else
-            //     {
-            //         Stop();
-            //     }
-            // }
-            
             Vector3 targetEulerAngles = GetTargetEulerAngles(_deltaX);
             transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(targetEulerAngles), _smoothSpeed);
         }
-
+        
         public override void SetActive(bool value)
         {
             base.SetActive(value);
 
             Stop();
         }
-
-        public void ResetRotation(bool instant, Action completed = null)
+        
+        public void ResetRotation(bool immediately, System.Action onComplete = null)
         {
             _deltaX = _startAngleY;
             Vector3 targetEulerAngles = GetTargetEulerAngles(_deltaX);
             
-            if (instant)
+            if (immediately)
             {
                 transform.localRotation = Quaternion.Euler(targetEulerAngles);
                 
-                completed?.Invoke();
+                onComplete?.Invoke();
             }
             else
             {
@@ -159,7 +122,7 @@ namespace VinhLB
                     yield return null;
                 }
                 
-                completed?.Invoke();
+                onComplete?.Invoke();
             }
         }
 

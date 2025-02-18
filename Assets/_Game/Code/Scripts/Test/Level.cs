@@ -8,6 +8,8 @@ namespace VinhLB
         private DragController _dragController;
         [SerializeField]
         private IsometricCameraRotation _cameraRotationController;
+        [SerializeField]
+        private IsometricCameraZoom _cameraZoomController;
         
         [SerializeField]
         private Transform _cameraPivot;
@@ -47,6 +49,7 @@ namespace VinhLB
         {
             _dragController.SetActive(true);
             _cameraRotationController.SetActive(true);
+            _cameraZoomController.SetActive(true);
             
             for (int i = 0; i < _boxItem.InnerItems.Length; i++)
             {

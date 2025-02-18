@@ -253,7 +253,7 @@ namespace VinhLB
                 out hitInfo, maxDistance, layerMask, queryTriggerInteraction);
         }
         
-        private static bool IsOnEditor()
+        public static bool IsOnEditor()
         {
             // return Application.platform == RuntimePlatform.WindowsEditor ||
             //        Application.platform == RuntimePlatform.OSXEditor ||
