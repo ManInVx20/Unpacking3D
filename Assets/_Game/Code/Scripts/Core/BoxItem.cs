@@ -19,14 +19,14 @@ namespace VinhLB
         private SoundData _interactSoundData;
         
         private Stack<DraggableItem> _availableInnerItemStack;
-        private Tween _interactTween;
+        private Sequence _boxSequence;
         private Vector3 _startScale;
         
         public DraggableItem[] InnerItems => _innerItems;
         public bool HasAnyItem => _availableInnerItemStack.Count > 0;
         
         public bool IsInteractable { get; set; } = true;
-
+        
         private void Awake()
         {
             // Put items to the box 
@@ -67,35 +67,46 @@ namespace VinhLB
                 Debug.Log("No item available");
                 return;
             }
-            
-            AudioManager.Instance.PlaySound(_interactSoundData);
-            
-            if (_interactTween.IsActive())
-            {
-                _interactTween.Kill();
-            }
-            
-            transform.localScale = _startScale;
-            _interactTween = transform.DOPunchScale(Vector3.one * 0.1f, 0.5f, 6);
-            
+
+            // Get and pull item
             DraggableItem item = _availableInnerItemStack.Pop();
             item.IsDraggable = false;
-            
             item.gameObject.SetActive(true);
             item.transform.SetParent(_itemHolderTF);
             
             float animDuration = 0.5f;
-            Sequence sequence = DOTween.Sequence();
-            sequence.Append(item.transform.DOLocalJump(GetRandomSpawnPosition(), 1f, 1, animDuration)
+            Sequence itemSequence = DOTween.Sequence();
+            itemSequence.Append(item.transform.DOLocalJump(GetRandomSpawnPosition(), 1f, 1, animDuration)
                 .SetEase(Ease.OutSine));
-            sequence.Join(item.transform.DOScale(item.transform.localScale, animDuration)
+            itemSequence.Join(item.transform.DOScale(item.transform.localScale, animDuration)
                 .From(item.transform.localScale * 0.5f)
                 .SetEase(Ease.OutSine));
-            sequence.OnComplete(() =>
+            itemSequence.OnComplete(() =>
             {
                 item.PlayFloatingAnim();
                 item.IsDraggable = true;
             });
+            
+            // Play sound and animation when interacting
+            AudioManager.Instance.PlaySound(_interactSoundData);
+            
+            if (_boxSequence.IsActive())
+            {
+                _boxSequence.Kill();
+            }
+            
+            _boxSequence = DOTween.Sequence();
+            transform.localScale = _startScale;
+            _boxSequence.Append(transform.DOPunchScale(Vector3.one * 0.1f, animDuration, 6));
+            
+            if (!HasAnyItem)
+            {
+                IsInteractable = false;
+                
+                // _boxSequence.AppendInterval(0.5f);
+                _boxSequence.Append(transform.DOScale(0, animDuration).SetEase(Ease.InBack));
+                _boxSequence.OnComplete(() => gameObject.SetActive(false));
+            }
         }
 
         private Vector3 GetRandomSpawnPosition()
