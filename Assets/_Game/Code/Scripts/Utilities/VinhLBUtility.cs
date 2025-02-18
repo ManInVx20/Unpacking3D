@@ -102,7 +102,7 @@ namespace VinhLB
             Vector3 pointerScreenPosition = Vector3.zero;
             if (IsOnEditor())
             {
-                if (Input.GetMouseButton(0))
+                if (Input.mousePresent)
                 {
                     pointerScreenPosition = Input.mousePosition;
                 }
@@ -144,31 +144,14 @@ namespace VinhLB
             return pointerWorldPosition;
         }
         
-        public static bool CheckClickOnUI(int touchIndex = 0)
+        public static bool IsPointerOnUI(int touchIndex = 0)
         {
-            PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-            eventDataCurrentPosition.position = GetPointerScreenPosition(touchIndex);
-            List<RaycastResult> results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-            foreach (var item in results)
-            {
-                if (item.gameObject.layer == VinhLBLayer.UI)
-                {
-                    return true;
-                }
-            }
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            eventData.position = GetPointerScreenPosition(touchIndex);
             
-            return false;
-        }
-        
-        // Returns 'true' if we touched or hovering on Unity UI element
-        public static bool IsPointerOverUI(int touchIndex = 0)
-        {
-            return IsPointerOverUI(GetEventSystemRaycastResults(touchIndex));
-        }
-        
-        private static bool IsPointerOverUI(List<RaycastResult> raycastResults)
-        {
+            List<RaycastResult> raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, raycastResults);
+            
             for (int i = 0; i < raycastResults.Count; i++)
             {
                 if (raycastResults[i].gameObject.layer == VinhLBLayer.UI)
@@ -179,17 +162,6 @@ namespace VinhLB
             
             return false;
         }
-        
-        private static List<RaycastResult> GetEventSystemRaycastResults(int touchIndex)
-        {
-            PointerEventData eventData = new PointerEventData(EventSystem.current);
-            eventData.position = GetPointerScreenPosition(touchIndex);
-            List<RaycastResult> raycastResults = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, raycastResults);
-            
-            return raycastResults;
-        }
-
         
         public static bool IsPointerActive()
         {

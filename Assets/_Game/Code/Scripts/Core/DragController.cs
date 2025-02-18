@@ -52,13 +52,13 @@ namespace VinhLB
             
             if (_pickedItem == null)
             {
-                if (VinhLBUtility.CheckClickOnUI())
-                {
-                    return;
-                }
-                
                 if (VinhLBUtility.IsPointerDown())
                 {
+                    if (VinhLBUtility.IsPointerOnUI())
+                    {
+                        return;
+                    }
+                    
                     DetectAndPickItem();
                 }
             }

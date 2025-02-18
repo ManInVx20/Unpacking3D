@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace VinhLB
 {
-    public class BoxItem : MonoBehaviour, IInteractable
+    public class BoxItem : MonoBehaviour, IInteractable, IPointerClickHandler
     {
         [SerializeField]
         private DraggableItem[] _innerItems;
@@ -44,14 +45,18 @@ namespace VinhLB
             _startScale = transform.localScale;
         }
         
-        private void OnMouseUpAsButton()
+        public void OnPointerClick(PointerEventData eventData)
         {
-            if (!HasAnyItem)
+            if (!IsInteractable)
             {
-                Debug.Log("No item available");
                 return;
             }
-
+            
+            if (VinhLBUtility.IsPointerOnUI())
+            {
+                return;
+            }
+            
             Interact();
         }
         
@@ -81,7 +86,7 @@ namespace VinhLB
             
             float animDuration = 0.5f;
             Sequence sequence = DOTween.Sequence();
-            sequence.Append(item.transform.DOLocalMove(GetRandomSpawnPosition(), animDuration)
+            sequence.Append(item.transform.DOLocalJump(GetRandomSpawnPosition(), 1f, 1, animDuration)
                 .SetEase(Ease.OutSine));
             sequence.Join(item.transform.DOScale(item.transform.localScale, animDuration)
                 .From(item.transform.localScale * 0.5f)

@@ -1,4 +1,4 @@
-using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace VinhLB
@@ -8,6 +8,11 @@ namespace VinhLB
         private void Awake()
         {
             Application.targetFrameRate = 60;
+        }
+        
+        private void Start()
+        {
+            PanelManager.Instance.CreatePanel<InGamePanel>(nameof(InGamePanel), true).Forget();
         }
     }
 }

@@ -26,7 +26,8 @@ namespace VinhLB
         private float _leftAngleLimit = 105f;
         [SerializeField]
         private float _rightAngleLimit = -15f;
-        
+
+        private bool _canGetInput = true;
         private float _deltaX;
         
         private void Awake()
@@ -41,35 +42,54 @@ namespace VinhLB
                 return;
             }
             
-            if (IsAnyControllerInUse(_blockControllers) || 
-                !InUse && VinhLBUtility.TryCastRay(_camera, out _, float.PositiveInfinity, _blockLayer))
+            // if (IsAnyControllerInUse(_blockControllers) || 
+            //     !InUse && VinhLBUtility.TryCastRay(_camera, out _, float.PositiveInfinity, _blockLayer))
+            // {
+            //     Stop();
+            //     
+            //     return;
+            // }
+            
+            if (_canGetInput && VinhLBUtility.IsPointerDown())
             {
-                Stop();
-                
-                return;
+                if (VinhLBUtility.IsPointerOnUI() 
+                    || VinhLBUtility.TryCastRay(_camera, out _, float.PositiveInfinity, _blockLayer))
+                {
+                    _canGetInput = false;
+                }
             }
             
-            if (VinhLBUtility.IsPointerActive())
+            if (_canGetInput)
             {
-                InUse = true;
-                
-                Vector2 deltaPosition = VinhLBUtility.GetPointerDeltaPosition();
-                _deltaX += deltaPosition.x * _rotationSpeed * Time.deltaTime;
-                
-                if (_leftAngleLimit > _rightAngleLimit)
+                if (VinhLBUtility.IsPointerActive())
                 {
-                    _deltaX = Mathf.Clamp(_deltaX, _rightAngleLimit, _leftAngleLimit);
+                    InUse = true;
+                
+                    Vector2 deltaPosition = VinhLBUtility.GetPointerDeltaPosition();
+                    _deltaX += deltaPosition.x * _rotationSpeed * Time.deltaTime;
+                
+                    if (_leftAngleLimit > _rightAngleLimit)
+                    {
+                        _deltaX = Mathf.Clamp(_deltaX, _rightAngleLimit, _leftAngleLimit);
+                    }
+                    else
+                    {
+                        _deltaX = Mathf.Clamp(_deltaX, _leftAngleLimit, _rightAngleLimit);   
+                    }
+                
+                    // transform.Rotate(Vector3.up, deltaX * _rotationSpeed * Time.deltaTime, Space.World);
                 }
                 else
                 {
-                    _deltaX = Mathf.Clamp(_deltaX, _leftAngleLimit, _rightAngleLimit);   
+                    Stop();
                 }
-                
-                // transform.Rotate(Vector3.up, deltaX * _rotationSpeed * Time.deltaTime, Space.World);
             }
             else
             {
-                Stop();
+                if (VinhLBUtility.IsPointerUp())
+                {
+                    _canGetInput = true;
+                }
             }
         }
 

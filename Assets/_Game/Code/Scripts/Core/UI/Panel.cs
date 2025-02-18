@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 
@@ -14,6 +15,8 @@ namespace VinhLB
         
         public string PanelName { get; private set; }
         public bool CanBack { get; private set; }
+        public float OpenAnimDuration => _openAnimDuration;
+        public float CloseAnimDuration => _closeAnimDuration;
         
         public void Initialize(string panelName, bool canBack)
         {
@@ -25,8 +28,8 @@ namespace VinhLB
         {
             gameObject.SetActive(true);
             
-            _canvasGroup.alpha = 0;
             _canvasGroup.interactable = false;
+            _canvasGroup.alpha = 0;
             _canvasGroup.DOFade(1f, _openAnimDuration)
                 .OnComplete(() => _canvasGroup.interactable = true);
         }
