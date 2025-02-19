@@ -13,7 +13,9 @@ namespace VinhLB
         private IsometricCameraZoom _cameraZoomController;
         
         [SerializeField]
-        private Transform _cameraPivot;
+        private Transform _cameraPivotTF;
+        [SerializeField]
+        private Transform _roomTF;
         [SerializeField]
         private BoxItem _boxItem;
         
@@ -26,7 +28,8 @@ namespace VinhLB
         {
             CachePool.Clear();
             
-            DraggableItem.TransformToFollowRotation = _cameraPivot;
+            DraggableItem.TransformToFollowRotation = _cameraPivotTF;
+            DraggableItem.TransformToDropRotation = _roomTF;
 
             foreach (DraggableItem item in _boxItem.InnerItems)
             {

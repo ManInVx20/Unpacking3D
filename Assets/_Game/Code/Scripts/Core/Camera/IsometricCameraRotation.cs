@@ -51,7 +51,7 @@ namespace VinhLB
             
             if (_canGetInput)
             {
-                if (VinhLBUtility.IsPointerActive())
+                if (VinhLBUtility.IsPointerActive() && (VinhLBUtility.IsOnEditor() || Input.touchCount == 1))
                 {
                     InUse = true;
                 

@@ -108,7 +108,7 @@ namespace VinhLB
                 _boxSequence.OnComplete(() => gameObject.SetActive(false));
             }
         }
-
+        
         private Vector3 GetRandomSpawnPosition()
         {
             return new Vector3(
@@ -116,5 +116,14 @@ namespace VinhLB
                 Random.Range(_bottomLeftSpawnPoint.localPosition.y, _topRightSpawnPoint.localPosition.y),
                 0);
         }
+        
+#if UNITY_EDITOR
+        [ContextMenu(nameof(CollectDraggableItems))]
+        private void CollectDraggableItems()
+        {
+            DraggableItem[] items = FindObjectsByType<DraggableItem>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            _innerItems = items;
+        }
+#endif
     }
 }

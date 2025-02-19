@@ -8,11 +8,31 @@ namespace VinhLB
     public abstract class DraggableItem : MonoBehaviour, IDraggable
     {
         public static Transform TransformToFollowRotation;
-        
-        private static float TargetRotationAngleY => 
-            TransformToFollowRotation != null ? -TransformToFollowRotation.localEulerAngles.y : 45f;
+        public static Transform TransformToDropRotation;
+
+        private static float TargetRotationAngleY
+        {
+            get
+            {
+                float angle = 45f;
+                if (TransformToFollowRotation != null)
+                {
+                    angle = -TransformToFollowRotation.localEulerAngles.y;
+                    if (TransformToDropRotation != null)
+                    {
+                        angle += TransformToDropRotation.localEulerAngles.y;
+                    }
+                }
+                
+                return angle;
+            }
+        }
         
         [Header("References")]
+        [SerializeField]
+        protected Transform _modelTF;
+        [SerializeField]
+        protected Transform _pivotTF;
         [SerializeField]
         protected Rigidbody _rigidbody;
         [SerializeField]
@@ -21,8 +41,6 @@ namespace VinhLB
         protected MeshRenderer _meshRenderer;
         [SerializeField]
         protected Outline _outline;
-        [SerializeField]
-        private Transform _pivot;
         
         [Header("Settings")]
         [SerializeField]
@@ -30,9 +48,11 @@ namespace VinhLB
         [SerializeField]
         protected DraggableSlot[] _targetSlots;
         [SerializeField]
-        private SoundData _pickSoundData;
+        protected float _upperOffset;
         [SerializeField]
-        private SoundData _dropSoundData;
+        protected SoundData _pickSoundData;
+        [SerializeField]
+        protected SoundData _dropSoundData;
         
         [Header("Events")]
         public UnityEvent Picking;
@@ -52,7 +72,8 @@ namespace VinhLB
         
         public bool IsDraggable { get; set; } = true;
         public bool IsDragging { get; set; } = false;
-        public Transform Pivot => _pivot;
+        public Transform PivotTF => _pivotTF;
+        public float UpperOffset => _upperOffset;
         
         public DraggableSlot CurrentSlot
         {
@@ -170,7 +191,7 @@ namespace VinhLB
         {
             _yLocalPosition = transform.localPosition.y;
             
-            _floatingTween =  transform.DOLocalMoveY(_yLocalPosition + 0.5f, _floatingCycleDuration)
+            _floatingTween =  transform.DOLocalMoveY(_yLocalPosition + 0.3f, _floatingCycleDuration)
                 .SetEase(Ease.InOutSine)
                 .SetLoops(-1, LoopType.Yoyo);
             
@@ -213,5 +234,18 @@ namespace VinhLB
             
             return new Vector3(randomAngleX, TargetRotationAngleY, randomAngleZ);
         }
+        
+#if UNITY_EDITOR
+        [ContextMenu(nameof(CollectComponents))]
+        private void CollectComponents()
+        {
+            _modelTF = transform.GetChild(0);
+            _pivotTF = transform.GetChild(1);
+            _rigidbody = GetComponent<Rigidbody>();
+            _collider = _modelTF.GetComponentInChildren<Collider>();
+            _meshRenderer = _modelTF.GetComponentInChildren<MeshRenderer>();
+            _outline = _modelTF.GetComponentInChildren<Outline>();
+        }
+#endif
     }
 }

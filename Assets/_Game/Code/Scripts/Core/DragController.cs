@@ -37,6 +37,7 @@ namespace VinhLB
         
         private float _leftOffset, _rightOffset, _topOffset, _bottomOffset;
         private Vector3 _dragOffset;
+        private Vector3 _lastWorldPosition;
         
         private DraggableItem _pickedItem;
         
@@ -152,7 +153,7 @@ namespace VinhLB
         {
             slot = null;
             
-            int hitCount = Physics.RaycastNonAlloc(_pickedItem.Pivot.position, _camera.transform.forward, 
+            int hitCount = Physics.RaycastNonAlloc(_pickedItem.PivotTF.position, _camera.transform.forward, 
                 _cachedHits, float.PositiveInfinity, _slotLayer | _wallLayer);
             if (hitCount == 0)
             {

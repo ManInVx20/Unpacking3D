@@ -59,6 +59,10 @@ namespace VinhLB
                     
                     _difference = (currentMagnitude - prevMagnitude) * 0.01f;
                 }
+                else
+                {
+                    _difference = 0;
+                }
             }
         }
 
