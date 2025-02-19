@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace VinhLB
@@ -29,14 +30,19 @@ namespace VinhLB
 
             foreach (DraggableItem item in _boxItem.InnerItems)
             {
-                item.Dropped.AddListener(() =>
+                item.Dropping.AddListener(() =>
                 {
                     if (item.CurrentSlot != null)
                     {
                         item.IsDraggable = false;
-                        
+                        item.SetColliderEnabled(false);
+                    }
+                });
+                item.Dropped.AddListener(() =>
+                {
+                    if (item.CurrentSlot != null)
+                    {
                         AudioManager.Instance.PlaySound(_correctSoundData);
-                        
                         EffectManager.Instance.GetAndPlay(item.transform.position);
                     }
                     
@@ -70,11 +76,13 @@ namespace VinhLB
             
             _dragController.SetActive(false);
             _cameraRotationController.SetActive(false);
+            _cameraZoomController.SetActive(false);
             
-            _cameraRotationController.ResetRotation(false, () =>
-            {
-                Invoke(nameof(Complete), 1f);
-            });
+            Sequence sequence = DOTween.Sequence();
+            sequence.AppendInterval(1f);
+            sequence.Append(_cameraRotationController.ResetRotation(false, 0.5f));
+            sequence.Join(_cameraZoomController.ResetZoom(false, 0.5f));
+            sequence.OnComplete(Complete);
         }
         
         private void Complete()

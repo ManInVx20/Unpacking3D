@@ -16666,7 +16666,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dragController: {fileID: 1960356180}
   _cameraRotationController: {fileID: 1323463415}
-  _cameraZoomController: {fileID: 0}
+  _cameraZoomController: {fileID: 1323463416}
   _cameraPivot: {fileID: 1323463414}
   _boxItem: {fileID: 1159866381}
   _correctSoundData:
@@ -17542,7 +17542,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   _zoomSpeed: 20
-  _zoomSmoothness: 6
+  _zoomSmoothness: 5
   _startZoom: 14
   _minZoom: 10
   _maxZoom: 18

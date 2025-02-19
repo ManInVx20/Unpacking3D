@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 namespace VinhLB
@@ -95,7 +96,7 @@ namespace VinhLB
             Stop();
         }
         
-        public void ResetRotation(bool immediately, System.Action onComplete = null)
+        public Tween ResetRotation(bool immediately, float duration = 1f, System.Action onComplete = null)
         {
             _deltaX = _startAngleY;
             Vector3 targetEulerAngles = GetTargetEulerAngles(_deltaX);
@@ -105,25 +106,13 @@ namespace VinhLB
                 transform.localRotation = Quaternion.Euler(targetEulerAngles);
                 
                 onComplete?.Invoke();
-            }
-            else
-            {
-                StartCoroutine(RotateCoroutine());
+
+                return null;
             }
             
-            return;
-            
-            IEnumerator RotateCoroutine()
-            {
-                while (Vector3.Distance(transform.localEulerAngles, targetEulerAngles) > 0.1f)
-                {
-                    transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(targetEulerAngles), _smoothSpeed);
-                    
-                    yield return null;
-                }
-                
-                onComplete?.Invoke();
-            }
+            return transform.DOLocalRotate(targetEulerAngles, duration)
+                .SetEase(Ease.InBack)
+                .OnComplete(() => onComplete?.Invoke());
         }
 
         private void Stop()

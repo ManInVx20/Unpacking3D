@@ -143,6 +143,11 @@ namespace VinhLB
             _animSequence.OnComplete(EndDrop);
         }
         
+        public void SetColliderEnabled(bool value)
+        {
+            _collider.enabled = value;
+        }
+        
         public bool HasSlotInTarget(DraggableSlot slot)
         {
             for (int i = 0; i < _targetSlots.Length; i++)

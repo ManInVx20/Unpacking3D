@@ -1,5 +1,5 @@
-using System;
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 namespace VinhLB
@@ -15,7 +15,7 @@ namespace VinhLB
         [SerializeField]
         private float _zoomSpeed = 20f;
         [SerializeField]
-        private float _zoomSmoothness = 6f;
+        private float _zoomSmoothness = 5f;
         
         [Space(10)]
         [SerializeField]
@@ -25,7 +25,6 @@ namespace VinhLB
         [SerializeField]
         private float _maxZoom = 18f;
         
-        private bool _canGetInput = true;
         private float _difference;
         private float _currentZoom;
 
@@ -58,7 +57,7 @@ namespace VinhLB
                     float prevMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
                     float currentMagnitude = (touchZero.position - touchOne.position).magnitude;
                     
-                    _difference = currentMagnitude - prevMagnitude;
+                    _difference = (currentMagnitude - prevMagnitude) * 0.01f;
                 }
             }
         }
@@ -69,34 +68,22 @@ namespace VinhLB
             _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, _currentZoom, _zoomSmoothness * Time.deltaTime);
         }
 
-        public void ResetZoom(bool immediately, System.Action onComplete = null)
+        public Tween ResetZoom(bool immediately, float duration = 1f, System.Action onComplete = null)
         {
             _currentZoom = _startZoom;
-
+            
             if (immediately)
             {
                 _camera.orthographicSize = _currentZoom;
                 
                 onComplete?.Invoke();
-            }
-            else
-            {
-                StartCoroutine(ZoomCoroutine());
+
+                return null;
             }
             
-            return;
-            
-            IEnumerator ZoomCoroutine()
-            {
-                while (!Mathf.Approximately(_camera.orthographicSize, _currentZoom))
-                {
-                    _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, _currentZoom, _zoomSmoothness * Time.deltaTime);
-                    
-                    yield return null;
-                }
-                
-                onComplete?.Invoke();
-            }
+            return _camera.DOOrthoSize(_currentZoom, 0.5f)
+                .SetEase(Ease.InBack)
+                .OnComplete(() => onComplete?.Invoke());
         }
     }
 }
