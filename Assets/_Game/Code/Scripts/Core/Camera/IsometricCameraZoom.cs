@@ -22,6 +22,8 @@ namespace VinhLB
         
         [Space(10)]
         [SerializeField]
+        private float _startZoomSize = 1f;
+        [SerializeField]
         private float _minZoomSize = 0.8f;
         [SerializeField]
         private float _maxZoomSize = 1.2f;
@@ -75,7 +77,7 @@ namespace VinhLB
         
         public Tween ResetZoom(bool immediately, float duration = 1f, System.Action onComplete = null)
         {
-            _currentZoomSize = _cameraScaler.CameraZoom;
+            _currentZoomSize = _startZoomSize;
             
             if (immediately)
             {
@@ -86,10 +88,8 @@ namespace VinhLB
                 return null;
             }
             
-            return DOVirtual.Float(_cameraScaler.CameraZoom, _currentZoomSize, 0.5f, (value) =>
-                {
-                    _cameraScaler.CameraZoom = value;
-                })
+            return DOTween.To(() => _cameraScaler.CameraZoom, (value) => _cameraScaler.CameraZoom = value, 
+                    _currentZoomSize, duration)
                 .SetEase(Ease.InBack)
                 .OnComplete(() => onComplete?.Invoke());
         }
