@@ -18,6 +18,7 @@ namespace VinhLB
             }
             
             _particleSystem.Play();
+            
             _playingCoroutine = StartCoroutine(WaitToEnd());
         }
         
@@ -30,6 +31,7 @@ namespace VinhLB
             }
             
             _particleSystem.Stop();
+            
             EffectManager.Instance.ReturnToPool(this);
         }
         

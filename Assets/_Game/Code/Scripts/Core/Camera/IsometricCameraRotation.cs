@@ -66,8 +66,6 @@ namespace VinhLB
                     {
                         _deltaX = Mathf.Clamp(_deltaX, _leftAngleLimit, _rightAngleLimit);   
                     }
-                
-                    // transform.Rotate(Vector3.up, deltaX * _rotationSpeed * Time.deltaTime, Space.World);
                 }
                 else
                 {

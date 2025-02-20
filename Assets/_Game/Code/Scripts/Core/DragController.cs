@@ -122,8 +122,13 @@ namespace VinhLB
             screenPosition.y = Mathf.Clamp(screenPosition.y, _bottomOffset, Screen.height - _topOffset);
             
             Vector3 worldPosition = _camera.ScreenToWorldPoint(screenPosition);
-            
             _pickedItem.transform.position = worldPosition;
+
+            Vector3 localOffset = new Vector3(
+                0,
+                _pickedItem.UpperOffset,
+                -_pickedItem.transform.localPosition.z);
+            _pickedItem.transform.localPosition += localOffset;
             
             _pickedItem.Drag();
         }
@@ -134,7 +139,7 @@ namespace VinhLB
             {
                 _pickedItem.CurrentSlot = slot;
                 slot.CurrentItem = _pickedItem;
-            
+                
                 _pickedItem.transform.SetParent(slot.transform);
             }
             else
@@ -183,7 +188,7 @@ namespace VinhLB
                     }
                 }
             }
-
+            
             return false;
         }
         

@@ -10,7 +10,7 @@ namespace VinhLB
         public static Transform TransformToFollowRotation;
         public static Transform TransformToDropRotation;
 
-        private static float TargetRotationAngleY
+        private static float _targetRotationAngleY
         {
             get
             {
@@ -55,11 +55,11 @@ namespace VinhLB
         protected SoundData _dropSoundData;
         
         [Header("Events")]
-        public UnityEvent Picking;
-        public UnityEvent Picked;
-        public UnityEvent Dragging;
-        public UnityEvent Dropping;
-        public UnityEvent Dropped;
+        public UnityEvent<DraggableItem> Picking;
+        public UnityEvent<DraggableItem> Picked;
+        public UnityEvent<DraggableItem> Dragging;
+        public UnityEvent<DraggableItem> Dropping;
+        public UnityEvent<DraggableItem> Dropped;
         
         private Tween _floatingTween;
         private float _yLocalPosition;
@@ -72,6 +72,7 @@ namespace VinhLB
         
         public bool IsDraggable { get; set; } = true;
         public bool IsDragging { get; set; } = false;
+        public Collider Collider => _collider;
         public Transform PivotTF => _pivotTF;
         public float UpperOffset => _upperOffset;
         
@@ -101,7 +102,7 @@ namespace VinhLB
         {
             IsDragging = true;
             
-            Picking?.Invoke();
+            Picking?.Invoke(this);
             
             AudioManager.Instance.PlaySound(_pickSoundData);
             
@@ -119,18 +120,18 @@ namespace VinhLB
             
             _animSequence = DOTween.Sequence();
             _animSequence.Append(transform.DOScale(_scaleFactor, _animDuration));
-            _animSequence.Join(transform.DOLocalRotate(new Vector3(0, TargetRotationAngleY, 0), _animDuration));
-            _animSequence.OnComplete(() => Picked?.Invoke());
+            _animSequence.Join(transform.DOLocalRotate(new Vector3(0, _targetRotationAngleY, 0), _animDuration));
+            _animSequence.OnComplete(() => Picked?.Invoke(this));
         }
         
         public virtual void Drag()
         {
-            Dragging?.Invoke();
+            Dragging?.Invoke(this);
         }
         
         public virtual void Drop()
         {
-            Dropping?.Invoke();
+            Dropping?.Invoke(this);
             
             AudioManager.Instance.PlaySound(_dropSoundData);
             
@@ -162,11 +163,6 @@ namespace VinhLB
             }
             
             _animSequence.OnComplete(EndDrop);
-        }
-        
-        public void SetColliderEnabled(bool value)
-        {
-            _collider.enabled = value;
         }
         
         public bool HasSlotInTarget(DraggableSlot slot)
@@ -221,7 +217,7 @@ namespace VinhLB
             
             IsDragging = false;
             
-            Dropped?.Invoke();
+            Dropped?.Invoke(this);
         }
         
         private Vector3 GetRandomEulerAngles()
@@ -232,7 +228,7 @@ namespace VinhLB
             float randomAngleZ = Random.Range(_rotationRange.x, _rotationRange.y);
             randomAngleZ *= (Random.Range(0, 2) > 0 ? 1 : -1);
             
-            return new Vector3(randomAngleX, TargetRotationAngleY, randomAngleZ);
+            return new Vector3(randomAngleX, _targetRotationAngleY, randomAngleZ);
         }
         
 #if UNITY_EDITOR

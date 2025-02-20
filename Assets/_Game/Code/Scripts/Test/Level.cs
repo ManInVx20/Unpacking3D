@@ -31,17 +31,17 @@ namespace VinhLB
             DraggableItem.TransformToFollowRotation = _cameraPivotTF;
             DraggableItem.TransformToDropRotation = _roomTF;
 
-            foreach (DraggableItem item in _boxItem.InnerItems)
+            for (int i = 0; i < _boxItem.InnerItems.Length; i++)
             {
-                item.Dropping.AddListener(() =>
+                _boxItem.InnerItems[i].Dropping.AddListener((item) =>
                 {
                     if (item.CurrentSlot != null)
                     {
                         item.IsDraggable = false;
-                        item.SetColliderEnabled(false);
+                        item.Collider.enabled = false;
                     }
                 });
-                item.Dropped.AddListener(() =>
+                _boxItem.InnerItems[i].Dropped.AddListener((item) =>
                 {
                     if (item.CurrentSlot != null)
                     {

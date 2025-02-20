@@ -1,5 +1,6 @@
 using System.Collections;
 using DG.Tweening;
+using EmeraldPowder.CameraScaler;
 using UnityEngine;
 
 namespace VinhLB
@@ -8,6 +9,8 @@ namespace VinhLB
     {
         [SerializeField]
         private Camera _camera;
+        [SerializeField]
+        private CameraScaler _cameraScaler;
         [SerializeField]
         private LayerMask _blockLayer;
         
@@ -19,14 +22,12 @@ namespace VinhLB
         
         [Space(10)]
         [SerializeField]
-        private float _startZoom = 14f;
+        private float _minZoomSize = 0.8f;
         [SerializeField]
-        private float _minZoom = 10f;
-        [SerializeField]
-        private float _maxZoom = 18f;
+        private float _maxZoomSize = 1.2f;
         
         private float _difference;
-        private float _currentZoom;
+        private float _currentZoomSize;
 
         private void Awake()
         {
@@ -65,27 +66,30 @@ namespace VinhLB
                 }
             }
         }
-
+        
         private void LateUpdate()
         {
-            _currentZoom = Mathf.Clamp(_currentZoom - _difference * _zoomSpeed * Time.deltaTime, _minZoom, _maxZoom);
-            _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, _currentZoom, _zoomSmoothness * Time.deltaTime);
+            _currentZoomSize = Mathf.Clamp(_currentZoomSize + _difference * _zoomSpeed * Time.deltaTime, _minZoomSize, _maxZoomSize);
+            _cameraScaler.CameraZoom = Mathf.Lerp(_cameraScaler.CameraZoom, _currentZoomSize, _zoomSmoothness * Time.deltaTime);
         }
-
+        
         public Tween ResetZoom(bool immediately, float duration = 1f, System.Action onComplete = null)
         {
-            _currentZoom = _startZoom;
+            _currentZoomSize = _cameraScaler.CameraZoom;
             
             if (immediately)
             {
-                _camera.orthographicSize = _currentZoom;
+                _cameraScaler.CameraZoom = _currentZoomSize;
                 
                 onComplete?.Invoke();
 
                 return null;
             }
             
-            return _camera.DOOrthoSize(_currentZoom, 0.5f)
+            return DOVirtual.Float(_cameraScaler.CameraZoom, _currentZoomSize, 0.5f, (value) =>
+                {
+                    _cameraScaler.CameraZoom = value;
+                })
                 .SetEase(Ease.InBack)
                 .OnComplete(() => onComplete?.Invoke());
         }

@@ -20,6 +20,7 @@ namespace VinhLB
             }
             
             _audioSource.Play();
+            
             _playingCoroutine = StartCoroutine(WaitForSoundToEnd());
         }
         
@@ -32,6 +33,7 @@ namespace VinhLB
             }
             
             _audioSource.Stop();
+            
             SoundManager.Instance.ReturnToPool(this);
         }
         
